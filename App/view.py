@@ -37,9 +37,73 @@ operación solicitada
 def printMenu():
     print("Bienvenido")
     print("1- Cargar información en el catálogo")
-    print("2- ")
+    print("2- Listar cronológicamente los artistas")
+    print("3- Listar cronológicamente las adquisiciones")
+    print("4- Clasificar las obras de un artista por técnica")
+    print("5- Clasificar las obras por la nacionalidad de sus creadores")
+    print("6- Transportar obras de un departamento")
+    print("7- Proponer una nueva exposición en el museo")
+    
+    
+    
+
+def initCatalog():
+
+    return controller.initCatalog()
+
+def loadData(catalog):
+
+    controller.loadData(catalog)
 
 catalog = None
+
+
+def last3works1(catalog):
+    listWorks = lt.subList(catalog['Artworks'],-2,3)
+    i = 0
+    resultWorks = []
+    while i < 3:
+        result = listWorks["elements"][i]["Title"]
+        i += 1
+        resultWorks.append(result)
+
+    return resultWorks
+
+def last3artists1(catalog):
+    listArtists = lt.subList(catalog["Artists"],-2,3)
+    i = 0
+    resultArtists = []
+    while i < 3:
+        result = listArtists["elements"][i]["DisplayName"]
+        i += 1
+        resultArtists.append(result)
+    return resultArtists
+
+
+
+def cronoArtists(catalog):
+
+    controller.cronoArtists(catalog)
+
+
+def cronoArtwAcqui(catalog):
+
+    controller.cronoArtwAcqui(catalog)
+
+
+def artistTechnique(catalog):
+
+    controller.artistTechnique(catalog)
+
+def nationalQuantity(catalog):
+    controller.nationalQuantity(catalog)
+
+#def top3last(
+
+def departmentTransport(catalog):
+    
+    controller.departmentTransport(catalog)
+
 
 """
 Menu principal
@@ -49,6 +113,16 @@ while True:
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 1:
         print("Cargando información de los archivos ....")
+        catalog = initCatalog()
+        loadData(catalog)
+        print('Obras cargadas: ' + str(lt.size(catalog['Artworks'])))
+        print('Artistas cargados: ' + str(lt.size(catalog['Artists'])))
+        print("Los últimos tres artistas son \n")
+        for i in last3artists1(catalog):
+            print(i,'\n')
+        print("Las últimas tres obras de arte son \n")
+        for i in last3works1(catalog):
+            print(i, '\n')
 
     elif int(inputs[0]) == 2:
         pass
