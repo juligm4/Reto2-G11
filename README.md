@@ -1,5 +1,11 @@
 #ISIS1225 - Librerias de soporte
 
+Integrantes
+
+Req. 3 Julián Galindo Mora - 202111477 - j.galindom2@uniandes.edu.co
+
+Req. 4 Jairo Alberto Garavito Correa - 202111499 - ja.garavito@uniandes.edu.co
+
 Este proyecto contiene los Tipos abstractos de datos, estructuras de datos y algoritmos requeridos por el curso ISIS1225-Estructuras de Datos y Algoritmos
 
 -Lib
