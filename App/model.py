@@ -115,11 +115,6 @@ def addArtwork(catalog, artwork):
 
     #Atajo para Adquisición:
     mp.put(catalog["FechaObra"], artwork, artwork["DateAcquired"])
-    
-
-
-# Funciones para agregar informacion al catalogo
-
 
 # Funciones para creacion de datos
 
