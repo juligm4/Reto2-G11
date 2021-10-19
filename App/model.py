@@ -45,11 +45,15 @@ def newCatalog():
 
     cat['Artists'] = lt.newList('ARRAY_LIST')
     
-    cat["ArtistsID"] = mp.newMap(maptype = 'PROBING', loadfactor = 0.5)
+    cat["ArtistsIDs"] = mp.newMap(maptype = 'CHAINING', loadfactor = 0.5)
 
-    cat["Tecnica-Medio"] = mp.newMap(maptype = 'PROBING', loadfactor = 0.5)
+    cat["Tecnica-Medio"] = mp.newMap(maptype = 'CHAINING', loadfactor = 0.5)
 
-    cat["Nacionalidad"] = mp.newMap(maptype = 'PROBING', loadfactor = 0.5)
+    cat["Nacionalidad"] = mp.newMap(maptype = 'CHAINING', loadfactor = 0.5)
+
+    cat["FechaArtista"] = mp.newMap(maptype = "CHAINING", loadfactor = 0.5)
+
+    cat["FechaObra"] = mp.newMap(maptype = "CHAINING", loadfactor = 0.5)
 
     return cat
 
@@ -61,18 +65,35 @@ def addArtist(catalog, artist):
     lt.addLast(catalog['Artists'], artist)
 
     #Añadir al dict de IDs
-    mp.put(catalog["ArtistsID"], artist["Displayname"], artist["ConstituentID"])
+    mp.put(catalog["ArtistsIDs"], artist["Displayname"], artist["ConstituentID"])
 
     #Atajo para función de Nacionalidad
-    if mp.contains(catalog["Nacionalidad"], artist["Nationality"]) == False:
-        init_list = [artist]
-        mp.put(catalog["Nacionalidad"], artist["Nationality"], init_list) 
+    var1 = artist["Nationality"]
+    if mp.contains(catalog["Nacionalidad"], var1) == False:
+        init_list1 = [artist]
+        mp.put(catalog["Nacionalidad"], var1, init_list1) 
     
     else:
-        pareja_actual = mp.get(catalog["Nacionalidad"], artist["Nationality"])
-        actual_list = pareja_actual[artist["Nationality"]]
-        actual_list.append(artist)
-        mp.put(catalog["Nacionalidad"], artist["Nationality"], actual_list)
+        pareja_actual1 = mp.get(catalog["Nacionalidad"], var1)
+        actual_list1 = pareja_actual1[var1]
+        actual_list1.append(artist)
+        mp.put(catalog["Nacionalidad"], var1, actual_list1)
+
+    #Atajo para Nacimiento
+    mp.put(catalog["FechaArtista"], artist, int(artist["BeginDate"]))
+
+    #var2 = int(artist["BeginDate"])
+    #if mp.contains(catalog["FechaArtista", var2]) == False:
+        #init_list2 = [artist]
+        #mp.put(catalog["FechaArtista"], var2, init_list2)
+    
+    #else:
+        #pareja_actual2 = mp.get(catalog["FechaArtista"], var2)
+        #actual_list2 = pareja_actual2[var2]
+        #actual_list2.append(artist)
+        #mp.put(catalog["FechaArtista"], var2, actual_list2)
+
+        
     
         
 def addArtwork(catalog, artwork):         
@@ -81,16 +102,20 @@ def addArtwork(catalog, artwork):
     lt.addLast(catalog['Artworks'], artwork)
 
     #Atajo para función de Medios
-    if mp.contains(catalog["Tecnica-Medio"], artwork["Medium"]) == False:
-        init_list = [artwork]
-        mp.put(catalog["Tecnica-Medio"], artwork["Medium"], init_list) 
+    var2 = artwork["Medium"]
+    if mp.contains(catalog["Tecnica-Medio"], var2) == False:
+        init_list2 = [artwork]
+        mp.put(catalog["Tecnica-Medio"], var2, init_list2) 
     
     else:
-        pareja_actual = mp.get(catalog["Tecnica-Medio"], artwork["Medium"])
-        actual_list = pareja_actual[artwork["Medium"]]
-        actual_list.append(artwork)
-        mp.put(catalog["Tecnica-Medio"], artwork["Medium"], actual_list) 
+        pareja_actual2 = mp.get(catalog["Tecnica-Medio"], var2)
+        actual_list2 = pareja_actual2[var2]
+        actual_list2.append(artwork)
+        mp.put(catalog["Tecnica-Medio"], var2, actual_list2) 
 
+    #Atajo para Adquisición:
+    mp.put(catalog["FechaObra"], artwork, artwork["DateAcquired"])
+    
 
 
 # Funciones para agregar informacion al catalogo
