@@ -38,28 +38,59 @@ los mismos.
 """
 
 def newCatalog():
-    """
-    Inicializa el catálogo de obras. Retorna el catalogo inicializado.
-    """
-    catalog = {'Artworks': None,
-               'Artists': None}
 
-    catalog['Artworks'] = lt.newList("ARRAY_LIST")
-    catalog['Artists'] = lt.newList("ARRAY_LIST", cmpfunction=compareArtists)
+    cat = {}
 
-    return catalog
+    cat['Artworks'] = lt.newList('ARRAY_LIST')
 
-def addArtworks(catalog, Artworks):
-
-    lt.addLast(catalog['Artworks'], Artworks)
-
-    constituentID = Artworks['ConstituentID'].split(",")
-
-def addArtists(catalog, Artists):
+    cat['Artists'] = lt.newList('ARRAY_LIST')
     
-    lt.addLast(catalog['Artists'], Artists)
+    cat["ArtistsID"] = mp.newMap(maptype = 'PROBING', loadfactor = 0.5)
 
-    constituentID = Artists['ConstituentID'].split(",")
+    cat["Tecnica-Medio"] = mp.newMap(maptype = 'PROBING', loadfactor = 0.5)
+
+    cat["Nacionalidad"] = mp.newMap(maptype = 'PROBING', loadfactor = 0.5)
+
+    return cat
+
+# Funciones para agregar informacion al catalogo
+
+def addArtist(catalog, artist):       
+
+    #Añadir a la Lista de Artistas
+    lt.addLast(catalog['Artists'], artist)
+
+    #Añadir al dict de IDs
+    mp.put(catalog["ArtistsID"], artist["Displayname"], artist["ConstituentID"])
+
+    #Atajo para función de Nacionalidad
+    if mp.contains(catalog["Nacionalidad"], artist["Nationality"]) == False:
+        init_list = [artist]
+        mp.put(catalog["Nacionalidad"], artist["Nationality"], init_list) 
+    
+    else:
+        pareja_actual = mp.get(catalog["Nacionalidad"], artist["Nationality"])
+        actual_list = pareja_actual[artist["Nationality"]]
+        actual_list.append(artist)
+        mp.put(catalog["Nacionalidad"], artist["Nationality"], actual_list)
+    
+        
+def addArtwork(catalog, artwork):         
+
+    #Añadir a la lista de obras
+    lt.addLast(catalog['Artworks'], artwork)
+
+    #Atajo para función de Medios
+    if mp.contains(catalog["Tecnica-Medio"], artwork["Medium"]) == False:
+        init_list = [artwork]
+        mp.put(catalog["Tecnica-Medio"], artwork["Medium"], init_list) 
+    
+    else:
+        pareja_actual = mp.get(catalog["Tecnica-Medio"], artwork["Medium"])
+        actual_list = pareja_actual[artwork["Medium"]]
+        actual_list.append(artwork)
+        mp.put(catalog["Tecnica-Medio"], artwork["Medium"], actual_list) 
+
 
 
 # Funciones para agregar informacion al catalogo
@@ -67,28 +98,11 @@ def addArtists(catalog, Artists):
 
 # Funciones para creacion de datos
 
-def newArtist(name):
-    """
-    Crea una nueva estructura para modelar los libros de
-    un autor y su promedio de ratings
-    """
-    artist = {'name': "", "Artworks": None}
-    artist['name'] = name
-    artist['Artworks'] = lt.newList()
-    return artist
+
 
 # Funciones de consulta
 
-def addWorkArtist(catalog, codes):
-    
-    list = lt.newList('ARRAY_LIST')
 
-    for i in lt.iterator(catalog['Artworks']):
-        diccionario = {}
-        if codes in i['ConstituentID']:
-            diccionario[i['Title']] = [codes]
-            lt.addLast(list, diccionario)
-    return list
 
 # Funciones utilizadas para comparar elementos dentro de una lista
 

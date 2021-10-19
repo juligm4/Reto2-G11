@@ -29,6 +29,9 @@ import csv
 El controlador se encarga de mediar entre la vista y el modelo.
 """
 
+
+
+
 # Inicialización del Catálogo de libros
 
 def initCatalog():
@@ -50,18 +53,18 @@ def loadData(catalog):
 
 def loadArtworks(catalog):
 
-    booksfile = cf.data_dir + 'MoMA/Artworks-utf8-large.csv'
+    booksfile = cf.data_dir + 'MoMA/Artworks-utf8-small.csv'
     input_file = csv.DictReader(open(booksfile, encoding='utf-8'))
     for Artworks in input_file:
-        model.addArtworks(catalog, Artworks)
+        model.addArtwork(catalog, Artworks)
 
 
 def loadArtists(catalog):
     
-    booksfile = cf.data_dir + 'MoMA/Artists-utf8-large.csv'
+    booksfile = cf.data_dir + 'MoMA/Artists-utf8-small.csv'
     input_file = csv.DictReader(open(booksfile, encoding='utf-8'))
     for Artists in input_file:
-        model.addArtists(catalog, Artists)
+        model.addArtist(catalog, Artists)
 
 # Funciones de ordenamiento
 
