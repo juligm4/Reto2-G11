@@ -1,4 +1,4 @@
-﻿"""
+"""
  * Copyright 2020, Departamento de sistemas y Computación,
  * Universidad de Los Andes
  *
@@ -82,18 +82,6 @@ def addArtist(catalog, artist):
     #Atajo para Nacimiento
     mp.put(catalog["FechaArtista"], artist, int(artist["BeginDate"]))
 
-    #var2 = int(artist["BeginDate"])
-    #if mp.contains(catalog["FechaArtista", var2]) == False:
-        #init_list2 = [artist]
-        #mp.put(catalog["FechaArtista"], var2, init_list2)
-    
-    #else:
-        #pareja_actual2 = mp.get(catalog["FechaArtista"], var2)
-        #actual_list2 = pareja_actual2[var2]
-        #actual_list2.append(artist)
-        #mp.put(catalog["FechaArtista"], var2, actual_list2)
-
-        
     
         
 def addArtwork(catalog, artwork):         
