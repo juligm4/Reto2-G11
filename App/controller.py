@@ -69,3 +69,17 @@ def loadArtists(catalog):
 # Funciones de ordenamiento
 
 # Funciones de consulta sobre el catálogo
+def cronoArtists(catalog):
+    model.cronoArtists(catalog)
+
+def cronoArtwAcqui(catalog):
+    model.cronoArtwAcqui(catalog)
+
+def artistTechnique(catalog):
+    model.artistTechnique(catalog)
+
+def nationalQuantity(catalog):
+    model.nationalQuantity(catalog)
+
+def departmentTransport(catalog):
+    model.departmentTransport(catalog)

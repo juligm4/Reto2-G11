@@ -1,4 +1,4 @@
-"""
+﻿"""
  * Copyright 2020, Departamento de sistemas y Computación,
  * Universidad de Los Andes
  *
@@ -25,12 +25,14 @@
  """
 
 
+from DISClib.DataStructures.arraylist import addLast
 import config as cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import mergesort as sa
 assert cf
+import time
 
 """
 Se define la estructura de un catálogo de videos. El catálogo tendrá dos listas, una para los videos, otra para las categorias de
@@ -55,6 +57,10 @@ def newCatalog():
 
     cat["FechaObra"] = mp.newMap(maptype = "CHAINING", loadfactor = 0.5)
 
+    cat["Autor"] = mp.newMap(maptype = "CHAINING", loadfactor = 0.5)
+
+    cat["Dept"] = mp.newMap(maptype = "CHAINING", loadfactor = 0.5)
+
     return cat
 
 # Funciones para agregar informacion al catalogo
@@ -65,10 +71,13 @@ def addArtist(catalog, artist):
     lt.addLast(catalog['Artists'], artist)
 
     #Añadir al dict de IDs
-    mp.put(catalog["ArtistsIDs"], artist["Displayname"], artist["ConstituentID"])
+    name = artist["Displayname"]   
+    name_f = name.upper()
+    mp.put(catalog["ArtistsIDs"], name_f, artist["ConstituentID"])
 
     #Atajo para función de Nacionalidad
-    var1 = artist["Nationality"]
+    var = artist["Nationality"]
+    var1 = var.upper()
     if mp.contains(catalog["Nacionalidad"], var1) == False:
         init_list1 = [artist]
         mp.put(catalog["Nacionalidad"], var1, init_list1) 
@@ -88,27 +97,150 @@ def addArtwork(catalog, artwork):
 
     #Añadir a la lista de obras
     lt.addLast(catalog['Artworks'], artwork)
-
-    #Atajo para función de Medios
-    var2 = artwork["Medium"]
-    if mp.contains(catalog["Tecnica-Medio"], var2) == False:
-        init_list2 = [artwork]
-        mp.put(catalog["Tecnica-Medio"], var2, init_list2) 
     
-    else:
-        pareja_actual2 = mp.get(catalog["Tecnica-Medio"], var2)
-        actual_list2 = pareja_actual2[var2]
-        actual_list2.append(artwork)
-        mp.put(catalog["Tecnica-Medio"], var2, actual_list2) 
+    for ind_au in artwork["ConstituentID"]:
 
-    #Atajo para Adquisición:
+        #Atajo para función de Medios
+        if mp.contains(catalog["Tecnica-Medio"], ind_au) == False:
+            intMap = mp.newMap(maptype = "CHAINING", loadfactor = 0.5)
+            intList = lt.newList(datastructure = "ARRAY_LIST")
+            lt.addLast(intList, artwork)
+            mp.put(intMap, artwork["Medium"], intList)
+            mp.put(catalog["Tecnica-Medio"], ind_au, intMap)
+        
+        else:
+            if mp.contains(catalog["Tecnica-Medio"][ind_au], artwork["Medium"]) == False:
+                intlist2 = lt.newList(datastructure = "ARRAY_LIST")
+                lt.addLast(intlist2, artwork)
+                mp.put(catalog["Tecnica-Medio"][ind_au],artwork["Medium"], intlist2)
+            
+            else:
+                intlist3 = catalog["Tecnica-Medio"][ind_au][artwork["Medium"]]
+                addLast(intlist3, artwork)
+
+    #TODO ignora esto hasta q llegues al req4 (esto es de lo que te hablo ahí)
+    #Atajo para Nacionalidad
+    mp.put(catalog["Origen"], artwork, ind_au)
+
+    #Atajo para Adquisición
     mp.put(catalog["FechaObra"], artwork, artwork["DateAcquired"])
 
-# Funciones para creacion de datos
-
-
+    #Atajo para Transporte
+    dep = artwork["Department"]
+    dep_f = dep.upper()
+    if mp.contains(catalog["Dept"], dep_f) == False:
+        TintList = lt.newList(datastructure = "ARRAY_LIST")
+        lt.addLast(TintList, artwork)
+        mp.put(catalog["Dept"], dep_f, TintList)
+    
+    else:
+        Tintlist2 = catalog["Dept"][dep_f]
+        addLast(Tintlist2, artwork)
 
 # Funciones de consulta
+
+def cronoArtists(catalog):
+    anio_inicial = int(input("Type the initial year of the time lapse you want to consult: "))
+    anio_final = int(input("Type the end year of the time lapse you want to consult: "))
+    data = lt.newList()
+
+    for artista in catalog["FechaArtista"]:
+        fecha_naci = catalog["FechaArtista"][artista]
+        if fecha_naci >= anio_inicial and fecha_naci <= anio_final:
+            lt.addLast(data, artista)
+    
+    print("There are " + str(lt.size(data)) + " artists born between " + str(anio_inicial) + " and " + str(anio_final) + "\n")
+    print("The first and last 3 artists in range are... " + "\n")
+
+    #TODO Falta la tabla y corregir el formato de los artistas correctos
+
+def cronoArtwAcqui(catalog):
+    initial_input = input("Ingrese la fecha inicial en formato AAAA/MM/DD: ")
+    end_input = input("Ingrese la fecha final en formato AAAA/MM/DD: ")
+    
+    data = lt.newList()
+
+    for obra in catalog["FechaObra"]:
+        fecha_adqui = catalog["FechaObra"][obra]
+        
+        if (compareDate(initial_input, fecha_adqui) == True) and (compareDate(fecha_adqui, end_input)):
+            lt.addLast(data, obra)
+    
+    print("The MoMA acquired " + str(lt.size(data)) + " unique pieces between " + initial_input + " and " + end_input)
+    #
+    #TODO Falta organizarla y corregir el formato de las obras seleccionadas
+
+def artistTechnique(catalog):
+    input_artist = input("Type the complete name of the artist you want to consult: ")
+    wished_artist = input_artist.upper()
+    wished_id = None
+    wished_map = None
+    v_tec_mas_u = None
+    k_tec_mas_u = None
+    num_tec_mas_u = 0
+    num_obras = 0
+    
+    wished_pair = mp.get(catalog["ArtistsIDs"], wished_artist)
+    wished_id = wished_pair[wished_artist]
+    
+    for cID in catalog["Tecnica-Medio"]:
+        if cID == wished_id:
+            wished_map == catalog["Tecnica-Medio"][cID]
+            break
+    
+    num_tecnicas = len(mp.keySet(wished_map))
+
+    
+    for part_list in mp.valueSet(wished_map):
+        num_obras += len(part_list)
+        if len(part_list) > num_tec_mas_u:
+            num_tec_mas_u = len(part_list)
+            v_tec_mas_u = part_list
+    
+    for medium in wished_map:
+        if wished_map[medium] == v_tec_mas_u:
+            k_tec_mas_u = medium
+            break
+    
+    #TODO Aplicar el formato a las obras correspondiente a ese artista y la mayor tecnica. 
+
+    print(wished_artist + " with MoMA ID " + wished_id + " has " + str(num_obras) + " pieces in his/her name at museum.")
+    print("There are " + str(num_tecnicas) + " different mediums/techniques in his/her work." + "\n")
+    print("Her/His top 5 Medium/Technique are: ")
+
+    #TODO Falta la tabla tipo dict que incluya los 5 medios con mas obras.
+
+    #TODO Falta la tabla con las 3 primeras y ultimas obras de la mejor tecnica de manera ordenada (esta lista esta alojada en la variable v_tec_mas_u). 
+
+def nationalQuantity(catalog):
+    
+    #TODO lee el parrafo de abajo
+
+    """
+    Esto lo debes hacer tu pq pos es tu función. Sin embargo, te ayude en lo que mas pude y ya cree un par de mpas que te pueden ayudar
+    catalog["Nacionalidad"] trae como llave a el pais y como valor una lista de los artistas (ten presente que no estan con el formato adecuado)
+    catalog["Origen"] trae como llave la obra completa y como valor el ID del autor (SUERTE). Además hay una cosa que tu decide como trabajar
+    el hastag todo q esta rriba en cargar obra esta indicando un mp.put (si lo dejas como esta deja en el valor la lista de artistas (ES UNA LISTA))
+    pero creo que si la alojas dentro del for que está arriba puede llegar a separarse segun el artista (miralo bien pues no pude probarlo).
+    """
+    pass
+    
+def departmentTransport(catalog):
+    input_dept = input("Type the complete name of the department you want to transport: ")
+    wished_dept = input_dept.upper()
+    #TODO ya cree una rama del catalogo principal que es un mapa que divide todas las obras en departamentos.
+    
+    pass
+
+
+    
+
+    
+
+
+    
+
+
 
 
 
@@ -128,7 +260,7 @@ def compareYears(artist2, artist1):
 
 def compareDate(date1, date2):
     if date2['DateAcquired'] < date1['DateAcquired']:
-        return date1
+        return True
     
 def comparePalabras(palabra1, palabra2):
     if palabra2 < palabra1:
