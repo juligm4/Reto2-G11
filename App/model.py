@@ -33,6 +33,7 @@ from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import mergesort as sa
 assert cf
 import time
+import operator
 
 """
 Se define la estructura de un catálogo de videos. El catálogo tendrá dos listas, una para los videos, otra para las categorias de
@@ -98,10 +99,21 @@ def addArtwork(catalog, artwork):
     #Añadir a la lista de obras
     lt.addLast(catalog['Artworks'], artwork)
     
-    for ind_au in artwork["ConstituentID"]:
+    ended = False
+    ind = 0
+    while ind < len(artwork["ConstituentID"]):
+        ind_au = artwork["ConstituentID"][ind]
+
+        if ind_au == None or ind_au == "":
+            ind_au = "Sin Artista"
+        if artwork["Medium"] == None or artwork["Medium"] == "":
+            artwork["Medium"] = "Sin medio o tecnica"
 
         #Atajo para función de Medios
+        print(mp.contains(catalog["Tecnica-Medio"], ind_au))
+
         if mp.contains(catalog["Tecnica-Medio"], ind_au) == False:
+
             intMap = mp.newMap(maptype = "CHAINING", loadfactor = 0.5)
             intList = lt.newList(datastructure = "ARRAY_LIST")
             lt.addLast(intList, artwork)
@@ -109,14 +121,16 @@ def addArtwork(catalog, artwork):
             mp.put(catalog["Tecnica-Medio"], ind_au, intMap)
         
         else:
-            if mp.contains(catalog["Tecnica-Medio"][ind_au], artwork["Medium"]) == False:
+            if mp.contains([catalog["Tecnica-Medio"][ind_au]], artwork["Medium"]) == False:
                 intlist2 = lt.newList(datastructure = "ARRAY_LIST")
                 lt.addLast(intlist2, artwork)
                 mp.put(catalog["Tecnica-Medio"][ind_au],artwork["Medium"], intlist2)
             
             else:
-                intlist3 = catalog["Tecnica-Medio"][ind_au][artwork["Medium"]]
+                intlist3 = [catalog["Tecnica-Medio"][ind_au][artwork["Medium"]]]
                 addLast(intlist3, artwork)
+        
+        ind += 1
 
     #TODO ignora esto hasta q llegues al req4 (esto es de lo que te hablo ahí)
     #Atajo para Nacionalidad
@@ -192,9 +206,9 @@ def artistTechnique(catalog):
 
     
     for part_list in mp.valueSet(wished_map):
-        num_obras += len(part_list)
-        if len(part_list) > num_tec_mas_u:
-            num_tec_mas_u = len(part_list)
+        num_obras += lt.size(part_list)
+        if lt.size(part_list) > num_tec_mas_u:
+            num_tec_mas_u = lt.size(part_list)
             v_tec_mas_u = part_list
     
     for medium in wished_map:
@@ -213,17 +227,21 @@ def artistTechnique(catalog):
     #TODO Falta la tabla con las 3 primeras y ultimas obras de la mejor tecnica de manera ordenada (esta lista esta alojada en la variable v_tec_mas_u). 
 
 def nationalQuantity(catalog):
-    
-    #TODO lee el parrafo de abajo
+    country_dict = {}
+    for pais in catalog["Nacionalidad"]:
+        cantAut = lt.size(catalog["Nacionalidad"][pais])
+        country_dict[pais] = catalog["Nacionalidad"][pais]
+              
+    data = sorted(country_dict.items(), key=operator.itemgetter(1), reverse=True)
+    best_country = data.items()
 
-    """
-    Esto lo debes hacer tu pq pos es tu función. Sin embargo, te ayude en lo que mas pude y ya cree un par de mpas que te pueden ayudar
-    catalog["Nacionalidad"] trae como llave a el pais y como valor una lista de los artistas (ten presente que no estan con el formato adecuado)
-    catalog["Origen"] trae como llave la obra completa y como valor el ID del autor (SUERTE). Además hay una cosa que tu decide como trabajar
-    el hastag todo q esta rriba en cargar obra esta indicando un mp.put (si lo dejas como esta deja en el valor la lista de artistas (ES UNA LISTA))
-    pero creo que si la alojas dentro del for que está arriba puede llegar a separarse segun el artista (miralo bien pues no pude probarlo).
-    """
-    pass
+    
+    print("The TOP 10 Countries in the MoMA are: ")
+
+    #TODO Falta la tabla con las 10 primeras parejas de data.
+
+    print("The TOP nationality in the museum is: " + best_country[0][0] + " with " + best_country[0][1] + " unique pieces.")
+    print("The first and last 3 objects in the " + best_country[0][0] + " artwork list are: ")
     
 def departmentTransport(catalog):
     input_dept = input("Type the complete name of the department you want to transport: ")
