@@ -92,25 +92,24 @@ def addArtist(catalog, artist):
     #Atajo para Nacimiento
     mp.put(catalog["FechaArtista"], artist, int(artist["BeginDate"]))
 
-    
         
 def addArtwork(catalog, artwork):         
 
     #Añadir a la lista de obras
     lt.addLast(catalog['Artworks'], artwork)
-    
-    ended = False
-    ind = 0
-    while ind < len(artwork["ConstituentID"]):
-        ind_au = artwork["ConstituentID"][ind]
+      
+    #Atajo para función de Medios
+    artist_list = eval(artwork["ConstituentID"])
 
-        if ind_au == None or ind_au == "":
+    if artwork["ConstituentID"] == None or ind_au == "":
             ind_au = "Sin Artista"
-        if artwork["Medium"] == None or artwork["Medium"] == "":
+    
+    if artwork["Medium"] == None or artwork["Medium"] == "":
             artwork["Medium"] = "Sin medio o tecnica"
 
-        #Atajo para función de Medios
-        print(mp.contains(catalog["Tecnica-Medio"], ind_au))
+    for ind in artist_list:
+
+        ind_au = str(ind)     
 
         if mp.contains(catalog["Tecnica-Medio"], ind_au) == False:
 
@@ -121,23 +120,31 @@ def addArtwork(catalog, artwork):
             mp.put(catalog["Tecnica-Medio"], ind_au, intMap)
         
         else:
-            if mp.contains([catalog["Tecnica-Medio"][ind_au]], artwork["Medium"]) == False:
+            if mp.contains(catalog["Tecnica-Medio"][ind_au], artwork["Medium"]) == False:
                 intlist2 = lt.newList(datastructure = "ARRAY_LIST")
                 lt.addLast(intlist2, artwork)
                 mp.put(catalog["Tecnica-Medio"][ind_au],artwork["Medium"], intlist2)
             
             else:
-                intlist3 = [catalog["Tecnica-Medio"][ind_au][artwork["Medium"]]]
+                intlist3 = catalog["Tecnica-Medio"][ind_au][artwork["Medium"]]
                 addLast(intlist3, artwork)
         
-        ind += 1
+        
 
     #TODO ignora esto hasta q llegues al req4 (esto es de lo que te hablo ahí)
     #Atajo para Nacionalidad
-    mp.put(catalog["Origen"], artwork, ind_au)
+    #mp.put(catalog["Origen"], artwork, ind_au)
 
     #Atajo para Adquisición
-    mp.put(catalog["FechaObra"], artwork, artwork["DateAcquired"])
+    if mp.contains(catalog["FechaObra"], artwork["DateAcquired"]) == False:
+        intlist4 = lt.newList(datastructure = "ARRAY_LIST")
+        lt.addLast(intlist4, artwork)
+        mp.put(catalog["FechaObra"], artwork["DateAcquired"], intlist4)
+    
+    else:
+        intlist5 = catalog["FechaObra"][artwork["DateAcquired"]]
+        addLast(intlist5, artwork)
+
 
     #Atajo para Transporte
     dep = artwork["Department"]
@@ -181,7 +188,7 @@ def cronoArtwAcqui(catalog):
             lt.addLast(data, obra)
     
     print("The MoMA acquired " + str(lt.size(data)) + " unique pieces between " + initial_input + " and " + end_input)
-    #
+    
     #TODO Falta organizarla y corregir el formato de las obras seleccionadas
 
 def artistTechnique(catalog):
