@@ -372,23 +372,23 @@ def nationalQuantity(catalog):
 
     winNatio = dataKeys[0]
     destiny4 = mp.get(catalog["Nacionalidad"], winNatio)
-    print(destiny4)
-    artistas = mp.valueSet(destiny4)
-    print(artistas)
-
+    artistas = me.getValue(destiny4)
     for artista in lt.iterator(artistas):
-        destiny5 = mp.get(catalog["Autor"], artist)
-        for obra in me.getValue(destiny5):
-            artistNames = ""
-            for artistID in obra["ConstituentID"]:
-                destiny6 = mp.get(catalog["ArtistsIDs"], artistID)
-                artistNames += str(me.getValue(destiny6)) 
-                artistNames += ", "
-            artistNamesF = artistNames[:-2]
-            obra["ArtistsNames"] = artistNamesF
-            countryArtworkList.append(obra)
+        destiny5 = mp.get(catalog["Autor"], artista)
+        if destiny5 != None:           
+            var1 = me.getValue(destiny5)
+            for obra in lt.iterator(var1):
+                artistNames = ""
+                for artistID in eval(obra["ConstituentID"]):
+                    destiny6 = mp.get(catalog["ArtistsIDs"], str(artistID))
+                    artistNames += str(me.getValue(destiny6)) 
+                    artistNames += ", "
+                artistNamesF = artistNames[:-2]
+                obra["ArtistsNames"] = artistNamesF
+                countryArtworkList.append(obra)
 
-    """
+    print(countryArtworkList)
+    
     finalDataList1 = [
         [dataKeys[0], dataValues[0]],
         [dataKeys[1], dataValues[1]],
@@ -402,15 +402,15 @@ def nationalQuantity(catalog):
         [dataKeys[9], dataValues[9]],
     ]
 
-    headList = countryArtworkList[0].keys()
+    headList = list(countryArtworkList[0].keys())
     orderedHeadList = [headList[0], headList[1], headList[-1], headList[4], headList[3], headList[5], headList[9], headList[8], headList[12]]
 
-    art1 = countryArtworkList[0].values()
-    art2 = countryArtworkList[1].values()
-    art3 = countryArtworkList[2].values()
-    artL1 = countryArtworkList[-1].values()
-    artL2 = countryArtworkList[-2].values()
-    artL3 = countryArtworkList[-3].values()
+    art1 = list(countryArtworkList[0].values())
+    art2 = list(countryArtworkList[1].values())
+    art3 = list(countryArtworkList[2].values())
+    artL1 = list(countryArtworkList[-1].values())
+    artL2 = list(countryArtworkList[-2].values())
+    artL3 = list(countryArtworkList[-3].values())
 
     finalDataList2 = [
     [art1[0], art1[1], art1[-1], art1[4], art1[3], art1[5], art1[9], art1[8], art1[12]], 
@@ -423,10 +423,10 @@ def nationalQuantity(catalog):
 
     print("The TOP 10 Countries in the MoMA are: ")
     print(tabulate(finalDataList1, headers = ["Nationality", "ArtWorks"], tablefmt = "pretty") + "\n")
-    print("The TOP nationality in the museum is: " + dataKeys[0] + " with " + dataValues[0] + " unique pieces.")
-    print("The first and last 3 objects in the " + dataKeys[0] + " artwork list are: ")
+    print("The TOP nationality in the museum is: " + str(dataKeys[0]) + " with " + str(dataValues[0]) + " unique pieces.")
+    print("The first and last 3 objects in the " + str(dataKeys[0]) + " artwork list are: ")
     print(tabulate(finalDataList2, headers = orderedHeadList, tablefmt = "pretty") + "\n")
-    """
+    
 
   
 def departmentTransport(catalog):
