@@ -23,6 +23,9 @@
 import config as cf
 import model
 import csv
+from DISClib.ADT import map as mp
+from DISClib.DataStructures import mapentry as me
+from DISClib.ADT import list as lt
 
 
 """
@@ -40,6 +43,7 @@ def initCatalog():
     """
     catalog = model.newCatalog()
     return catalog
+    
 
 # Funciones para la carga de datos
 
@@ -50,6 +54,8 @@ def loadData(catalog):
     """
     loadArtworks(catalog)
     loadArtists(catalog)
+    
+    
 
 def loadArtworks(catalog):
 
@@ -83,3 +89,6 @@ def nationalQuantity(catalog):
 
 def departmentTransport(catalog):
     model.departmentTransport(catalog)
+
+def longlivedArtist(catalog):
+    model.longlivedArtist(catalog)

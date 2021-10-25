@@ -82,28 +82,22 @@ def last3artists1(catalog):
 
 
 def cronoArtists(catalog):
-
     controller.cronoArtists(catalog)
 
-
 def cronoArtwAcqui(catalog):
-
     controller.cronoArtwAcqui(catalog)
 
-
 def artistTechnique(catalog):
-
     controller.artistTechnique(catalog)
 
 def nationalQuantity(catalog):
     controller.nationalQuantity(catalog)
 
-#def top3last(
-
-def departmentTransport(catalog):
-    
+def departmentTransport(catalog):    
     controller.departmentTransport(catalog)
 
+def longlivedArtist(catalog):
+    controller.longlivedArtist(catalog)
 
 """
 Menu principal
@@ -125,7 +119,23 @@ while True:
             print(i, '\n')
 
     elif int(inputs[0]) == 2:
-        pass
+        cronoArtists(catalog)
+    
+    elif int(inputs[0]) == 3:
+        cronoArtwAcqui(catalog)
+    
+    elif int(inputs[0]) == 4:
+        artistTechnique(catalog)
+    
+    elif int(inputs[0]) == 5:
+        nationalQuantity(catalog)
+    
+    elif int(inputs[0]) == 6:
+        nationalQuantity(catalog)
+    
+    elif int(inputs[0]) == 7:
+        longlivedArtist(catalog)
+
 
     else:
         sys.exit(0)
