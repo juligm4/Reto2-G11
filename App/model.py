@@ -152,19 +152,16 @@ def addArtwork(catalog, artwork):
         
         else:
             destiny1 = mp.get(catalog["Tecnica-Medio"], ind_au)
-            if mp.contains(me.getValue(destiny1), artwork["Medium"]) == False:
+            medium_dict_map = me.getValue(destiny1)
+            if mp.contains(medium_dict_map, artwork["Medium"]) == False:
                 intlist2 = lt.newList(datastructure = "ARRAY_LIST")
                 lt.addLast(intlist2, artwork)
-                mp.put(me.getValue(destiny1), artwork["Medium"].upper(), intlist2)
+                mp.put(medium_dict_map, artwork["Medium"].upper(), intlist2)
             
             else:
-                destiny2 = mp.get(mp.getKey(destiny1), artwork["Medium"].upper())
+                destiny2 = mp.get(medium_dict_map, artwork["Medium"].upper())
                 intlist3 = me.getValue(destiny2)
                 addLast(intlist3, artwork)
-
-        
-
-        
 
     #Atajo para Adquisición
     
@@ -301,48 +298,81 @@ def artistTechnique(catalog):
     wished_artist = input_artist.upper()
     wished_id = None
     wished_map = None
-    v_tec_mas_u = None
-    k_tec_mas_u = None
-    num_tec_mas_u = 0
+    tec_mas_u = None
     num_obras = 0
     
-    wished_pair = mp.get(catalog["ArtistsIDs"], wished_artist)
-    wished_id = wished_pair[1]
-    
-    cIDs = mp.keySet(catalog["Tecnica-Medio"])
-    for cID in lt.iterator(cIDs):
-        if cID == wished_id:
-            destiny1 = mp.get(catalog["Tecnica-Medio"], cID)
-            wished_map == me.getValue(destiny1)
+    id_list = mp.keySet(catalog["ArtistsIDs"])
+    for i in lt.iterator(id_list):
+        pair = mp.get(catalog["ArtistsIDs"], i)
+        value = me.getValue(pair)
+        if value == wished_artist:
+            wished_id = i
             break
     
-    num_tecnicas = len(mp.keySet(wished_map))
+    
+    destiny1 = mp.get(catalog["Tecnica-Medio"], wished_id)
+    wished_map = me.getValue(destiny1)
+            
+    num_tecnicas = mp.size(wished_map)
+    lista_medios = mp.keySet(wished_map)
 
-    
-    for part_list in mp.valueSet(wished_map):
-        num_obras += lt.size(part_list)
-        if lt.size(part_list) > num_tec_mas_u:
-            num_tec_mas_u = lt.size(part_list)
-            v_tec_mas_u = part_list
-    
-    for medium in wished_map:
-        if wished_map[medium] == v_tec_mas_u:
-            k_tec_mas_u = medium
-            break
+    tabla = []
 
+    for medio in lt.iterator(lista_medios):
+        linea = [medio]
+        pareja_medio = mp.get(wished_map, medio)
+        lista_obras = me.getValue(pareja_medio)
+        num_obras_medio = lt.size(lista_obras)
+        print(num_obras_medio)
+        num_obras += num_obras_medio
+        linea.append(num_obras_medio)
+        tabla.append(linea)
+
+    org_tabla1 = sorted(tabla, key=lambda x:x[1], reverse=False)
+
+    tabla1 = org_tabla1[:5]
+    headliners1 = ["MediumName", "Count"]
+    
+    tec_mas_u = tabla1[0][0]
+    v_tec_mas_u = tabla1[0][1]
+    
+    matriz = []
+    pareja_mas_u = mp.get(wished_map, tec_mas_u)
+    lista_mas_u = me.getValue(pareja_mas_u)
+    for obra in lt.iterator(lista_mas_u):
+        linea2 = []
+        linea2.append(obra["ObjectID"])
+        linea2.append(obra["Title"])
+        linea2.append(obra["Medium"])
+        linea2.append(int(obra["Date"]))
+        linea2.append(obra["Dimensions"])
+        linea2.append(obra["DateAcquired"])
+        linea2.append(obra["Department"])
+        linea2.append(obra["Classification"])
+        linea2.append(obra["URL"])
+        matriz.append(linea2)
     
     
-    #TODO Aplicar el formato a las obras correspondiente a ese artista y la mayor tecnica. 
+    org_tabla2 = sorted(matriz, key=lambda x:x[3])
+    #tabla2 = [org_tabla2[0], org_tabla2[1], org_tabla2[2], org_tabla2[-3], org_tabla2[-2], org_tabla2[-1]]
+    tabla2_Sample = [org_tabla2[0]]
+    headliners2 = ["ObjectID", "Title", "Medium", "Date", "Dimensions", "DateAcquired", "Department", "Classification", "URL"]
+    
+
+
 
     print(wished_artist + " with MoMA ID " + wished_id + " has " + str(num_obras) + " pieces in his/her name at museum.")
     print("There are " + str(num_tecnicas) + " different mediums/techniques in his/her work." + "\n")
     print("Her/His top 5 Medium/Technique are: ")
 
-    #TODO Falta la tabla tipo dict que incluya los 5 medios con mas obras.
+    print(tabulate(tabla1, headers=headliners1, tablefmt="pretty") + "\n")
 
-    #TODO Falta la tabla con las 3 primeras y ultimas obras de la mejor tecnica de manera ordenada (esta lista esta alojada en la variable v_tec_mas_u). 
+    print("His/Her most used Medium/Technique is: " + tec_mas_u + " with " + str(v_tec_mas_u) + " pieces.")
+    print("A sample of " + tec_mas_u + " from the collection are: \n")
 
+    print(tabulate(tabla2_Sample, headers=headliners2, tablefmt="pretty") + "\n")
 
+    
 def nationalQuantity(catalog):
     countryQuantDict = {}
     countryArtworkList = []
